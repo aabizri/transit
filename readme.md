@@ -9,7 +9,7 @@ Run `go get -u transit`
 ## Use
 
 ### Search places (Works !)
-`transit place "rue de vanves" "avenue de gaulle" "rue du caire"`
+For finding places (not public transport places) use: `transit place "rue de vanves" "avenue de gaulle" "rue du caire"`
 
 ### Plan a journey (WIP)
 To plan a journey from one point to the next use: `transit journey from "11 Avenue Victor Hugo, Paris" to "Notre-dame-des-champs"`
