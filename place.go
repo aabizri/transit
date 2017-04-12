@@ -7,24 +7,30 @@ import (
 	"github.com/urfave/cli"
 )
 
+var placeFlags = []cli.Flag{
+	cli.UintFlag{
+		Name:  "count, c",
+		Value: 6,
+	},
+}
+
 var placeCommand = cli.Command{
 	Name:    "place",
 	Aliases: []string{"p"},
 	Usage:   "Search for places",
 	Action:  placeAction,
+	Flags:   placeFlags,
 }
 
 func placeAction(c *cli.Context) error {
-	var response string
-	for _, query := range c.Args() {
-		req := gonavitia.PlacesRequest{Query: query}
+	for i, query := range c.Args() {
+		req := gonavitia.PlacesRequest{Query: query, Count: c.Uint("count")}
 
 		res, err := session.Places(req)
 		if err != nil {
 			return errors.Wrap(err, "Error while requesting places")
 		}
-		response += fmt.Sprintf("\nQuery \"%s\" (%d results):\n%s", query, len(res.Places), res.String())
+		fmt.Printf("\n[%d/%d] Query \"%s\" (%d results):\n%s", i, len(c.Args()), query, len(res.Places), res.String())
 	}
-	fmt.Print(response)
 	return nil
 }
