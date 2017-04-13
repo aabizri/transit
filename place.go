@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/aabizri/gonavitia"
+	"github.com/aabizri/navitia"
 	"github.com/pkg/errors"
 	"github.com/urfave/cli"
 )
@@ -24,7 +24,7 @@ var placeCommand = cli.Command{
 
 func placeAction(c *cli.Context) error {
 	for i, query := range c.Args() {
-		req := gonavitia.PlacesRequest{Query: query, Count: c.Uint("count")}
+		req := navitia.PlacesRequest{Query: query, Count: c.Uint("count")}
 
 		res, err := session.Places(req)
 		if err != nil {

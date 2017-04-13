@@ -4,7 +4,7 @@ travel is a command line tool for planning your travel between two places
 package main
 
 import (
-	"github.com/aabizri/gonavitia"
+	"github.com/aabizri/navitia"
 	"github.com/pkg/errors"
 	"github.com/urfave/cli"
 	"net/http"
@@ -18,7 +18,7 @@ var commands = []cli.Command{
 
 var (
 	apiKey  string
-	session *gonavitia.Session
+	session *navitia.Session
 )
 
 var flags = []cli.Flag{
@@ -36,7 +36,7 @@ func establishSession(ctx *cli.Context) error {
 	}
 
 	var err error
-	session, err = gonavitia.NewCustom(apiKey, "http://api.navitia.io/v1", &http.Client{})
+	session, err = navitia.NewCustom(apiKey, "http://api.navitia.io/v1", &http.Client{})
 	return errors.Wrap(err, "Error while creating session")
 }
 

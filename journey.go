@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/aabizri/gonavitia"
-	"github.com/aabizri/gonavitia/types"
+	"github.com/aabizri/navitia"
+	"github.com/aabizri/navitia/types"
 	"github.com/pkg/errors"
 	"github.com/urfave/cli"
 )
@@ -59,7 +59,7 @@ func journeyAction(c *cli.Context) error {
 	fromChan := make(chan types.Place)
 	toChan := make(chan types.Place)
 	getPlace := func(query string, c chan types.Place) {
-		req := gonavitia.PlacesRequest{Query: query, Count: 1}
+		req := navitia.PlacesRequest{Query: query, Count: 1}
 
 		res, err := session.Places(req)
 		if err != nil {
@@ -94,7 +94,7 @@ func journeyAction(c *cli.Context) error {
 	}
 
 	// Build query
-	req := gonavitia.JourneyRequest{
+	req := navitia.JourneyRequest{
 		Count: c.Uint("count"),
 	}
 	if from != "" {
