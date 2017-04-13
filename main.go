@@ -7,11 +7,13 @@ import (
 	"github.com/aabizri/gonavitia"
 	"github.com/pkg/errors"
 	"github.com/urfave/cli"
+	"net/http"
 	"os"
 )
 
 var commands = []cli.Command{
 	placeCommand,
+	journeyCommand,
 }
 
 var (
@@ -34,7 +36,7 @@ func establishSession(ctx *cli.Context) error {
 	}
 
 	var err error
-	session, err = gonavitia.New(apiKey)
+	session, err = gonavitia.NewCustom(apiKey, "http://api.navitia.io/v1", &http.Client{})
 	return errors.Wrap(err, "Error while creating session")
 }
 

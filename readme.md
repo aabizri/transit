@@ -11,7 +11,7 @@ Run `go get -u transit`
 ### Search places (Works !)
 For finding places (not public transport places) use: `transit place "rue de vanves" "avenue de gaulle" "rue du caire"`
 
-### Plan a journey (WIP)
+### Plan a journey (WIP but has rudimentary working !)
 To plan a journey from one point to the next use: `transit journey from "11 Avenue Victor Hugo, Paris" to "Notre-dame-des-champs"`
 
 Options:
