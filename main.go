@@ -9,7 +9,10 @@ import (
 	"github.com/urfave/cli"
 	"net/http"
 	"os"
+	"time"
 )
+
+const standardRequestTimeout = 10 * time.Second
 
 var commands = []cli.Command{
 	placeCommand,
@@ -17,8 +20,9 @@ var commands = []cli.Command{
 }
 
 var (
-	apiKey  string
-	session *navitia.Session
+	apiKey         string
+	requestTimeout time.Duration
+	session        *navitia.Session
 )
 
 var flags = []cli.Flag{
@@ -27,6 +31,12 @@ var flags = []cli.Flag{
 		Usage:       "Api Key for navitia.io",
 		Destination: &apiKey,
 		EnvVar:      "NAVITIA_TOKEN",
+	},
+	cli.DurationFlag{
+		Name:        "req-timeout, rt",
+		Usage:       "Request timeout value",
+		Value:       standardRequestTimeout,
+		Destination: &requestTimeout,
 	},
 }
 

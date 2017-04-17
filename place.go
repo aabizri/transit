@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"github.com/aabizri/navitia"
 	"github.com/pkg/errors"
@@ -23,10 +24,14 @@ var placeCommand = cli.Command{
 }
 
 func placeAction(c *cli.Context) error {
+	ctx := context.Background()
 	for i, query := range c.Args() {
+		ctx, cancel := context.WithTimeout(ctx, requestTimeout)
+		defer cancel()
+
 		req := navitia.PlacesRequest{Query: query, Count: c.Uint("count")}
 
-		res, err := session.Places(req)
+		res, err := session.Places(ctx, req)
 		if err != nil {
 			return errors.Wrap(err, "Error while requesting places")
 		}

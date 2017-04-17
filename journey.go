@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"github.com/aabizri/navitia"
 	"github.com/aabizri/navitia/types"
@@ -50,6 +51,9 @@ journeyAction works like that:
 	- Then query
 */
 func journeyAction(c *cli.Context) error {
+	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
+	defer cancel()
+
 	fromQuery, toQuery, err := parseJourneyArgs(c.Args())
 	if err != nil {
 		fmt.Print(err)
@@ -61,7 +65,7 @@ func journeyAction(c *cli.Context) error {
 	getPlace := func(query string, c chan types.Place) {
 		req := navitia.PlacesRequest{Query: query, Count: 1}
 
-		res, err := session.Places(req)
+		res, err := session.Places(ctx, req)
 		if err != nil {
 			panic(errors.Wrap(err, "Error while requesting places"))
 		} else if len(res.Places) == 0 {
@@ -105,7 +109,7 @@ func journeyAction(c *cli.Context) error {
 	}
 
 	// Send it
-	res, err := session.Journeys(req)
+	res, err := session.Journeys(ctx, req)
 	fmt.Printf("Got journeys:\n%s\n", res.String())
 	if err != nil {
 		fmt.Printf("Got an error: %v", err)
