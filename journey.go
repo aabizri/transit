@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
+	"os"
+
 	"github.com/aabizri/navitia"
 	"github.com/aabizri/navitia/types"
 	"github.com/pkg/errors"
@@ -60,9 +62,10 @@ func journeyAction(c *cli.Context) error {
 		return err
 	}
 
-	fromChan := make(chan types.Place)
-	toChan := make(chan types.Place)
-	getPlace := func(query string, c chan types.Place) {
+	fromChan := make(chan types.Container)
+	toChan := make(chan types.Container)
+	getPlace := func(query string, c chan types.Container) {
+
 		req := navitia.PlacesRequest{Query: query, Count: 1}
 
 		res, err := session.Places(ctx, req)
@@ -91,9 +94,9 @@ func journeyAction(c *cli.Context) error {
 	for (fromQuery != "" && from == "") || (toQuery != "" && to == "") {
 		select {
 		case rec := <-fromChan:
-			from = rec.PlaceID()
+			from = rec.ID
 		case rec := <-toChan:
-			to = rec.PlaceID()
+			to = rec.ID
 		}
 	}
 
@@ -110,7 +113,8 @@ func journeyAction(c *cli.Context) error {
 
 	// Send it
 	res, err := session.Journeys(ctx, req)
-	fmt.Printf("Got journeys:\n%s\n", res.String())
+	fmt.Printf("Got %d journeys\n", res.Count())
+	journeyResultsWrite(res, os.Stdout)
 	if err != nil {
 		fmt.Printf("Got an error: %v", err)
 		return err
