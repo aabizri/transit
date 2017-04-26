@@ -41,6 +41,15 @@ var flags = []cli.Flag{
 	},
 }
 
+var authors = []cli.Author{
+	cli.Author{
+		Name:  "Alexandre A. Bizri",
+		Email: "alexandre@bizri.fr",
+	},
+}
+
+const description = "transit is a tool for planning, monitoring and searching public transit information"
+
 func establishSession(ctx *cli.Context) error {
 	if apiKey == "" {
 		return errors.Errorf("ERROR: No Api Key specified")
@@ -54,6 +63,10 @@ func establishSession(ctx *cli.Context) error {
 func main() {
 	app := cli.NewApp()
 	app.Version = "-dev"
+	app.Description = description
+	app.Name = "transit"
+	app.Usage = "The public transit tool for the CLI"
+	app.Authors = authors
 	app.Before = establishSession
 	app.Flags = flags
 	app.Commands = commands
