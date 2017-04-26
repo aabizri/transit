@@ -43,7 +43,7 @@ func placeAction(c *cli.Context) error {
 		}
 
 		// Now let's print
-		msg := fmt.Sprintf("\n[%d/%d] Query \"%s\" ", i, len(c.Args()), color.New(color.Underline, color.FgHiCyan).Sprint(query))
+		msg := fmt.Sprintf("\n[%d/%d] Query \"%s\" ", i+1, len(c.Args()), color.New(color.Underline, color.FgHiCyan).Sprint(query))
 		buf := bytes.NewBuffer([]byte(msg))
 		err = pretty.DefaultPlacesResultsConf.PrettyWrite(pr, buf)
 		if err != nil {
