@@ -4,12 +4,13 @@ travel is a command line tool for planning your travel between two places
 package main
 
 import (
-	"github.com/aabizri/navitia"
-	"github.com/pkg/errors"
-	"github.com/urfave/cli"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/aabizri/navitia"
+	"github.com/pkg/errors"
+	"github.com/urfave/cli"
 )
 
 const standardRequestTimeout = 10 * time.Second
@@ -52,6 +53,7 @@ func establishSession(ctx *cli.Context) error {
 
 func main() {
 	app := cli.NewApp()
+	app.Version = "-dev"
 	app.Before = establishSession
 	app.Flags = flags
 	app.Commands = commands
