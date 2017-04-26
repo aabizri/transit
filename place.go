@@ -1,9 +1,15 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"fmt"
+	"io"
+	"os"
+
 	"github.com/aabizri/navitia"
+	"github.com/aabizri/navitia/pretty"
+	"github.com/fatih/color"
 	"github.com/pkg/errors"
 	"github.com/urfave/cli"
 )
@@ -31,11 +37,19 @@ func placeAction(c *cli.Context) error {
 
 		req := navitia.PlacesRequest{Query: query, Count: c.Uint("count")}
 
-		res, err := session.Places(ctx, req)
+		pr, err := session.Places(ctx, req)
 		if err != nil {
 			return errors.Wrap(err, "Error while requesting places")
 		}
-		fmt.Printf("\n[%d/%d] Query \"%s\" (%d results):\n%s", i, len(c.Args()), query, len(res.Places), res.String())
+
+		// Now let's print
+		msg := fmt.Sprintf("\n[%d/%d] Query \"%s\" ", i, len(c.Args()), color.New(color.Underline, color.FgHiCyan).Sprint(query))
+		buf := bytes.NewBuffer([]byte(msg))
+		err = pretty.DefaultPlacesResultsConf.PrettyWrite(pr, buf)
+		if err != nil {
+			return errors.Wrapf(err, "Error while preparing result output for query #%d", i)
+		}
+		io.Copy(os.Stdout, buf)
 	}
 	return nil
 }

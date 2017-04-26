@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/aabizri/navitia"
+	"github.com/aabizri/navitia/pretty"
 	"github.com/aabizri/navitia/types"
 	"github.com/pkg/errors"
 	"github.com/urfave/cli"
@@ -45,7 +46,7 @@ var journeyCommand = cli.Command{
 
 func parseJourneyArgs(args []string) (from string, to string, err error) {
 	if len(args) > 4 || len(args) == 0 {
-		return "", "", errors.Errorf("Number of arguments for journey incorect (%d<%d<%d)", 2, len(args), 4)
+		return "", "", errors.Errorf("Number of arguments for journey incorrect (%d<%d<%d)", 2, len(args), 4)
 	}
 
 	for len(args) >= 2 {
@@ -131,10 +132,9 @@ func journeyAction(c *cli.Context) error {
 
 	// Send it
 	res, err := session.Journeys(ctx, req)
-	fmt.Printf("Got %d journeys\n", res.Count())
-	journeyResultsWrite(res, os.Stdout)
+	err = pretty.DefaultJourneyResultsConf.PrettyWrite(res, os.Stdout)
 	if err != nil {
-		fmt.Printf("Got an error: %v", err)
+		fmt.Printf("Got an error while pretty-printing: %v", err)
 		return err
 	}
 
