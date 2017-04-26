@@ -44,6 +44,10 @@ var flags = []cli.Flag{
 		Name:  "in",
 		Usage: "Coverage to use [NOT IMPLEMENTED]",
 	},
+	cli.StringFlag{
+		Name:  "map",
+		Usage: "Write a map to the specified path",
+	},
 }
 
 var authors = []cli.Author{

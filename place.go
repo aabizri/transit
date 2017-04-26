@@ -6,10 +6,14 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
+
+	"github.com/aabizri/transit/maps"
 
 	"github.com/aabizri/navitia"
 	"github.com/aabizri/navitia/pretty"
 	"github.com/fatih/color"
+	"github.com/fogleman/gg"
 	"github.com/pkg/errors"
 	"github.com/urfave/cli"
 )
@@ -55,6 +59,29 @@ func placeAction(c *cli.Context) error {
 		if err != nil {
 			return errors.Wrapf(err, "error while copying buffer to stdout")
 		}
+
+		// If enabled, draw !
+		if path := c.GlobalString("map"); path != "" {
+			if !filepath.IsAbs(path) {
+				wd, err := os.Getwd()
+				if err != nil {
+					return errors.Wrap(err, "couldn't retrieve working directory, consider giving an absolute path")
+				}
+
+				path = filepath.Join(wd, path)
+			}
+
+			img, err := maps.DrawPlaces(pr.Places)
+			if err != nil {
+				return errors.Wrap(err, "error while drawing places")
+			}
+
+			err = gg.SavePNG(path, img)
+			if err != nil {
+				return errors.Wrapf(err, "error while saving image to %s", path)
+			}
+		}
 	}
+
 	return nil
 }
