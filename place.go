@@ -39,8 +39,10 @@ func placeAction(c *cli.Context) error {
 		ctx, cancel := context.WithTimeout(gctx, requestTimeout)
 		defer cancel()
 
+		// Create a request
 		req := navitia.PlacesRequest{Query: query, Count: c.Uint("count")}
 
+		// Execute it
 		pr, err := session.Places(ctx, req)
 		if err != nil {
 			return errors.Wrap(err, "Error while requesting places")
