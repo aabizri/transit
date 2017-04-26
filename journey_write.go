@@ -9,6 +9,7 @@ import (
 
 	"github.com/aabizri/navitia"
 	"github.com/aabizri/navitia/types"
+	"github.com/fatih/color"
 )
 
 func journeyResultsWrite(jr *navitia.JourneyResults, out io.Writer) {
@@ -49,7 +50,7 @@ const timeLayout = "15:04"
 
 func journeyWrite(j *types.Journey, out io.Writer) {
 	// Build the envellope
-	msg := fmt.Sprintf("%s ➡️ %s | %s\n", j.Departure.Format(timeLayout), j.Arrival.Format(timeLayout), j.Duration.String())
+	msg := fmt.Sprintf("%s ➡️ %s | %s\n", color.RedString(j.Departure.Format(timeLayout)), color.RedString(j.Arrival.Format(timeLayout)), color.MagentaString(j.Duration.String()))
 	// Buffers to line-up the reads, sequentially
 	buffers := make([]io.Reader, len(j.Sections))
 	// Waitgroup for each goroutine
@@ -124,9 +125,8 @@ func sectionWrite(s *types.Section, out io.Writer) {
 	case s.Display.PhysicalMode != "":
 		middle = modeEmoji[string(s.Display.PhysicalMode)] + s.Display.Label
 	}
-	msg := fmt.Sprintf("\t%s (%s)\t%s➡️%s\n", middle, s.Duration.String(), s.From.Name, s.To.Name)
+	msg := fmt.Sprintf("\t%s (%s)\t%s➡️%s\n", color.GreenString(middle), color.MagentaString(s.Duration.String()), color.BlueString(s.From.Name), color.BlueString(s.To.Name))
 
-	// Add color support via s.Display.Color
 	_, err := out.Write([]byte(msg))
 	if err != nil {
 		panic(err)
