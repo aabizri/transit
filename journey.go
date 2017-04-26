@@ -14,8 +14,23 @@ import (
 // Add departure, arrival, mode, etc.
 var journeyFlags = []cli.Flag{
 	cli.UintFlag{
-		Name:  "count, c",
-		Value: 6,
+		Name: "count, c",
+	},
+	cli.StringFlag{
+		Name:  "departure, dep",
+		Usage: "Departure date/time (NOT IMPLEMENTED)",
+	},
+	cli.StringFlag{
+		Name:  "arrival, arr",
+		Usage: "Arrival date/time (NOT IMPLEMENTED)",
+	},
+	cli.UintFlag{
+		Name:  "max-transfers",
+		Usage: "Maximum number of transfers",
+	},
+	cli.DurationFlag{
+		Name:  "max-duration, max",
+		Usage: "Maximum duration of journey",
 	},
 }
 
@@ -102,7 +117,9 @@ func journeyAction(c *cli.Context) error {
 
 	// Build query
 	req := navitia.JourneyRequest{
-		Count: c.Uint("count"),
+		Count:        c.Uint("count"),
+		MaxDuration:  c.Duration("max-duration"),
+		MaxTransfers: c.Uint("max-transfers"),
 	}
 	if from != "" {
 		req.From = from
