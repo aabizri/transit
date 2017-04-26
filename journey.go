@@ -38,7 +38,7 @@ var journeyFlags = []cli.Flag{
 
 var journeyCommand = cli.Command{
 	Name:    "journey",
-	Aliases: []string{"j"},
+	Aliases: []string{"journeys,j"},
 	Usage:   "Build journey propositions",
 	Action:  journeyAction,
 	Flags:   journeyFlags,
@@ -79,26 +79,29 @@ func journeyAction(c *cli.Context) error {
 		return err
 	}
 
+	// Define the goroutine that will be launched to get both from's and to's IDs
 	fromChan := make(chan types.Container)
 	toChan := make(chan types.Container)
 	getPlace := func(query string, c chan types.Container) {
-
 		req := navitia.PlacesRequest{Query: query, Count: 1}
 
 		res, err := session.Places(ctx, req)
 		if err != nil {
-			panic(errors.Wrap(err, "Error while requesting places"))
+			err = errors.Wrap(err, "Error while calling navitia.Places")
 		} else if len(res.Places) == 0 {
-			panic("Not enough responses")
+			err = errors.Errorf("Not enough responses")
 		}
+
+		// TODO: Deal with errors
+		_ = err
 
 		c <- res.Places[0]
 	}
 
+	// Query for the correct ids
 	if fromQuery != "" {
 		go getPlace(fromQuery, fromChan)
 	}
-
 	if toQuery != "" {
 		go getPlace(toQuery, toChan)
 	}
@@ -132,10 +135,15 @@ func journeyAction(c *cli.Context) error {
 
 	// Send it
 	res, err := session.Journeys(ctx, req)
+	if err != nil {
+		return errors.Wrap(err, "Got an error while requesting journeys")
+	}
+
+	// PrettyWrite it
 	err = pretty.DefaultJourneyResultsConf.PrettyWrite(res, os.Stdout)
 	if err != nil {
-		fmt.Printf("Got an error while pretty-printing: %v", err)
-		return err
+
+		return errors.Wrap(err, "Got an error while pretty-printing")
 	}
 
 	return nil

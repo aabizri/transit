@@ -23,16 +23,16 @@ var placeFlags = []cli.Flag{
 
 var placeCommand = cli.Command{
 	Name:    "place",
-	Aliases: []string{"p"},
+	Aliases: []string{"places,p"},
 	Usage:   "Search for places",
 	Action:  placeAction,
 	Flags:   placeFlags,
 }
 
 func placeAction(c *cli.Context) error {
-	ctx := context.Background()
+	gctx := context.Background()
 	for i, query := range c.Args() {
-		ctx, cancel := context.WithTimeout(ctx, requestTimeout)
+		ctx, cancel := context.WithTimeout(gctx, requestTimeout)
 		defer cancel()
 
 		req := navitia.PlacesRequest{Query: query, Count: c.Uint("count")}
@@ -49,7 +49,12 @@ func placeAction(c *cli.Context) error {
 		if err != nil {
 			return errors.Wrapf(err, "Error while preparing result output for query #%d", i)
 		}
-		io.Copy(os.Stdout, buf)
+
+		// And copy
+		_, err = io.Copy(os.Stdout, buf)
+		if err != nil {
+			return errors.Wrapf(err, "error while copying buffer to stdout")
+		}
 	}
 	return nil
 }

@@ -4,6 +4,7 @@ travel is a command line tool for planning your travel between two places
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -39,6 +40,10 @@ var flags = []cli.Flag{
 		Value:       standardRequestTimeout,
 		Destination: &requestTimeout,
 	},
+	cli.StringFlag{
+		Name:  "in",
+		Usage: "Coverage to use [NOT IMPLEMENTED]",
+	},
 }
 
 var authors = []cli.Author{
@@ -70,5 +75,9 @@ func main() {
 	app.Before = establishSession
 	app.Flags = flags
 	app.Commands = commands
-	app.Run(os.Args)
+	err := app.Run(os.Args)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }
