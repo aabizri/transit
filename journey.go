@@ -14,7 +14,8 @@ import (
 // Add departure, arrival, mode, etc.
 var journeyFlags = []cli.Flag{
 	cli.UintFlag{
-		Name: "count, c",
+		Name:  "count, c",
+		Usage: "Amount of journey results to display",
 	},
 	cli.StringFlag{
 		Name:  "departure, dep",
