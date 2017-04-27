@@ -19,6 +19,7 @@ const standardRequestTimeout = 10 * time.Second
 var commands = []cli.Command{
 	placeCommand,
 	journeyCommand,
+	coverageCommand,
 }
 
 var (

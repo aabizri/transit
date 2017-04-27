@@ -35,7 +35,33 @@ func DrawPlaces(places []types.Container) (image.Image, error) {
 	// Render
 	img, err := smctx.Render()
 	if err != nil {
-		return nil, errors.Wrap(err, "DrawPoints: error while rendering image")
+		return nil, errors.Wrap(err, "DrawPlaces: error while rendering image")
+	}
+
+	return img, nil
+}
+
+// DrawRegions draws multiple regions
+func DrawRegions(regions []types.Region) (image.Image, error) {
+	smctx := sm.NewContext()
+	smctx.SetTileProvider(sm.NewTileProviderCartoLight())
+	smctx.SetSize(420, 420)
+	for _, r := range regions {
+		area := &sm.Area{}
+		for _, l1 := range r.Shape.Coords() {
+			for _, l2 := range l1 {
+				for _, l3 := range l2 {
+					area.Positions = append(area.Positions, s2.LatLngFromDegrees(l3[0], l3[0]))
+				}
+			}
+		}
+		smctx.AddArea(area)
+	}
+
+	// Render
+	img, err := smctx.Render()
+	if err != nil {
+		return nil, errors.Wrap(err, "DrawRegions: error while rendering image")
 	}
 
 	return img, nil
